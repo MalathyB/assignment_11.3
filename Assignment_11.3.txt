@@ -1,0 +1,86 @@
+1.Explain in brief static and dynamic partitioning with an example and share the
+code with output screenshot.
+
+Static partitioning:
+*Insert input data files individually into a partition table is Static Partition
+*Usually when loading files (big files) into Hive tables static partitions are preferred
+*Static Partition saves your time in loading data compared to dynamic partition
+*You “statically” add a partition in table and move the file into the partition of the table.
+*We can alter the partition in static partition
+*You can get the partition column value form the filename, day of date etc without reading the whole big file.
+*If you want to use Static partition in hive you should set property set hive.mapred.mode = strict  This property set by default in hive-site.xml
+*Static partition is in Strict Mode
+*You should use where clause to use limit in static partition
+*You can perform Static partition on Hive Manage table or external table.
+
+Dynamic partitioning:
+*single insert to partition table is known as dynamic partition
+*Usually dynamic partition load the data from non partitioned table
+*Dynamic Partition takes more time in loading data compared to static partition
+*When you have large data stored in a table then Dynamic partition is suitable.
+*If you want to partition number of column but you don’t know how many columns then also dynamic partition is suitable
+*Dynamic partition there is no required where clause to use limit.
+*we can’t perform alter on Dynamic partition
+*You can perform dynamic partition on hive external table and managed table
+*If you want to use Dynamic partition in hive then mode is in nonstrict mode
+*Here is hive dynamic partition properties you should allow
+
+2. Explain in brief partitioning and bucketing with an example and share the code
+with output screenshot.
+
+Partitioning:
+
+Hive Partitioning dividing the large amount of data into number pieces of folders based on table columns value.
+Hive Partition is often used for distributing load horizontally, this has performance benefit, and helps in organizing data in a logical fashion.
+If you want to use Partition in hive then you should use PARTITIONED BY (COL1,COL2…etc) command while hive table creation.
+
+We can perform partition on any number of columns in a table by using hive partition concept.
+We can perform Hive Partitioning concept on Hive Tables like Managed tables or External tables
+Partitioning is works better when the cardinality of the partitioning field is not too high .
+Supposes if we perform partition on Date column then new partition directories created for every date this very burden to name node metadata.
+
+Partitioning works best when the cardinality of the partitioning field is not too high.
+Assume that you are storing information of people in entire world spread across 196+ countries spanning around 500 crores of entries. If you want to query people from a particular country (Vatican city), in absence of partitioning, you have to scan all 500 crores of entries even to fetch thousand entries of a country. If you partition the table based on country, you can fine tune querying process by just checking the data for only one country partition. Hive partition creates a separate directory for a column(s) value.
+
+Bucketing:
+
+Hive bucketing is responsible for dividing the data into number of equal parts
+If you want to use bucketing in hive then you should use CLUSTERED BY (Col) command while creating a table in Hive
+We can perform Hive bucketing concept on Hive Managed tables or External tables
+We can perform Hive bucketing optimization only on one column only not more than one.
+The value of this column will be hashed by a user-defined number into buckets.
+bucketing works well when the field has high cardinality and data is evenly distributed among buckets
+If you want to perform queries on Date or Timestamp or other columns which are having high records fields at that time Hive bucketing concept is perfectible.
+
+We can assign number of number buckets while creating the table.
+Bucketing also very useful in doing efficient map-side joins etc.
+Clustering aka bucketing on the other hand, will result with a fixed number of files, since you do specify the number of buckets. What hive will do is to take the field, calculate a hash and assign a record to that bucket.
+
+But what happens if you use let’s say 256 buckets and the field you’re bucketing on has a low cardinality (for instance, it’s a US state, so can be only 50 different values) ? You’ll have 50 buckets with data, and 206 buckets with no data.
+
+3. Explain in brief different types of groups in hive with an example and share the
+code with output screenshots
+
+Hive data is organized into:
+
+Databases: Namespaces function to avoid naming conflicts for tables, views, partitions, columns, and so on.  
+           Databases can also be used to enforce security for a user or group of users.
+
+Tables: Homogeneous units of data which have the same schema.
+        An example of a table could be page_views table, where each row could comprise of the following columns (schema):
+              timestamp—which is of INT type that corresponds to a UNIX timestamp of when the page was viewed.
+              userid —which is of BIGINT type that identifies the user who viewed the page.
+              page_url—which is of STRING type that captures the location of the page.
+              referer_url—which is of STRING that captures the location of the page from where the user arrived at the current page.
+              IP—which is of STRING type that captures the IP address from where the page request was made.
+
+Partitions: Each Table can have one or more partition Keys which determines how the data is stored. 
+            Partitions—apart from being storage units—also allow the user to efficiently identify the rows that satisfy a specified criteria; for example, a date_partition of type STRING and country_partition of type STRING. 
+            Each unique value of the partition keys defines a partition of the Table.
+            For example, all "US" data from "2009-12-23" is a partition of the page_views table. 
+            Therefore, if you run analysis on only the "US" data for 2009-12-23, you can run that query only on the relevant partition of the table, thereby speeding up the analysis significantly. 
+            Note however, that just because a partition is named 2009-12-23 does not mean that it contains all or only data from that date; partitions are named after dates for convenience; it is the user's job to guarantee the relationship between partition name and data content! Partition columns are virtual columns, they are not part of the data itself but are derived on load.
+
+Buckets (or Clusters): Data in each partition may in turn be divided into Buckets based on the value of a hash function of some column of the Table. 
+                       For example the page_views table may be bucketed by userid, which is one of the columns, other than the partitions columns, of the page_view table. 
+                       These can be used to efficiently sample the data.
